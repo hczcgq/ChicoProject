@@ -3,6 +3,7 @@ package com.chico.photo.library.adapter;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,6 +116,8 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             } else {
                 contentHolder.gif.setVisibility(View.GONE);
             }
+
+            Log.e("====推昂",image.getPath());
 
             Glide.with(mContext)
                     .load(new File(image.getPath()))

@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class PreviewActivity extends AppCompatActivity{
 
-    public static final int REQUEST_PREVIEW = 68;
+
     public static final String EXTRA_PREVIEW_LIST = "previewList";
     public static final String EXTRA_PREVIEW_SELECT_LIST = "previewSelectList";
     public static final String EXTRA_MAX_SELECT_NUM = "maxSelectNum";
@@ -41,7 +41,6 @@ public class PreviewActivity extends AppCompatActivity{
     public static final String OUTPUT_ISDONE = "isDone";
 
     private LinearLayout barLayout;
-    private RelativeLayout selectBarLayout;
     private ImageView backImage;
     private TextView titleText,doneText;
     private CheckBox checkboxSelect;
@@ -61,7 +60,7 @@ public class PreviewActivity extends AppCompatActivity{
         intent.putExtra(EXTRA_PREVIEW_SELECT_LIST, (ArrayList) selectImages);
         intent.putExtra(EXTRA_POSITION, position);
         intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
-        context.startActivityForResult(intent, REQUEST_PREVIEW);
+        context.startActivityForResult(intent, ImageActivity.REQUEST_PREVIEW);
     }
 
     private void getIntentData(){
@@ -86,9 +85,7 @@ public class PreviewActivity extends AppCompatActivity{
         barLayout = (LinearLayout) findViewById(R.id.bar_layout);
         backImage= (ImageView) findViewById(R.id.iv_back);
         titleText= (TextView) findViewById(R.id.tv_title);
-        selectBarLayout = (RelativeLayout) findViewById(R.id.select_bar_layout);
         titleText.setText((position + 1) + "/" + images.size());
-
         doneText = (TextView) findViewById(R.id.done_text);
         onSelectNumChange();
 
@@ -217,7 +214,7 @@ public class PreviewActivity extends AppCompatActivity{
      */
     public void switchBarVisibility() {
         barLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
-        selectBarLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
+        doneText.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
         isShowBar = !isShowBar;
     }
 
@@ -226,6 +223,7 @@ public class PreviewActivity extends AppCompatActivity{
      * @param isDone
      */
     public void onDoneClick(boolean isDone){
+        Log.e("======>",selectImages.toString());
         Intent intent = new Intent();
         intent.putExtra(OUTPUT_LIST,(ArrayList)selectImages);
         intent.putExtra(OUTPUT_ISDONE,isDone);

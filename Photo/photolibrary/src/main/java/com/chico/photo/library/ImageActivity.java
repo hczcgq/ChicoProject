@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,10 +35,12 @@ public class ImageActivity extends AppCompatActivity {
 
     public final static String BUNDLE_CAMERA_PATH = "CameraPath";
     public final static String REQUEST_OUTPUT = "outputList";
+    public final static int REQUEST_VIDEO = 65;
     public final static int REQUEST_IMAGE = 66;
     public final static int REQUEST_CAMERA = 67;
     public final static int REQUEST_FOLD = 68;
     public final static int REQUEST_RECORD = 69; //录制视频
+    public static final int REQUEST_PREVIEW = 20; //预览
     public final static int MODE_MULTIPLE = 1;
     public final static int MODE_SINGLE = 2;
     public final static int TYPE_VIDEO = 1;
@@ -60,6 +63,7 @@ public class ImageActivity extends AppCompatActivity {
 
     private List<FoldEntity> foldArray; //目录集合
     private String cameraPath;
+    private String videoPath;
 
 
     public static void start(Activity activity, int type) {
@@ -78,7 +82,7 @@ public class ImageActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_SHOW_CAMERA, isShow);
         intent.putExtra(EXTRA_ENABLE_PREVIEW, enablePreview);
         intent.putExtra(EXTRA_ENABLE_CROP, enableCrop);
-        activity.startActivityForResult(intent, REQUEST_IMAGE);
+        activity.startActivityForResult(intent, type == TYPE_IMAGE ? REQUEST_IMAGE : REQUEST_VIDEO);
     }
 
     private void getIntendData(Bundle savedInstanceState) {
@@ -117,12 +121,13 @@ public class ImageActivity extends AppCompatActivity {
         cancelText = (TextView) findViewById(R.id.tv_cancle);
         doneText = (TextView) findViewById(R.id.tv_done);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_view);
+        titleText.setText(selectType == TYPE_IMAGE ? "所有图片" : "所有视频");
 
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, ScreenUtils.dip2px(this, 5), false));
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
-        mAdapter = new ImageAdapter(this,selectType, maxSelectNum, selectMode, showCamera, enablePreview);
+        mAdapter = new ImageAdapter(this, selectType, maxSelectNum, selectMode, showCamera, enablePreview);
         mRecyclerView.setAdapter(mAdapter);
 
         registerListener();
@@ -223,13 +228,13 @@ public class ImageActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.e("=====>", e.getMessage());
                     }
 
                     @Override
                     public void onNext(List<FoldEntity> array) {
                         if (array != null && array.size() > 0) {
                             foldArray = array;
-                            titleText.setText(array.get(0).getName());
                             mAdapter.setDatas(array.get(0).getMedias());
                         }
                     }
@@ -254,7 +259,10 @@ public class ImageActivity extends AppCompatActivity {
      */
     private void startRecord() {
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        File videoFile = FileUtils.createVideoFile(this);
+        videoPath=videoFile.getAbsolutePath();
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(videoFile));
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY,1);
         startActivityForResult(intent, REQUEST_RECORD);
     }
 
@@ -283,13 +291,13 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     /**
-     * 返回选择图片
+     * 返回选择文件
      *
-     * @param images
+     * @param array
      */
-    public void onResult(ArrayList<String> images) {
-        if (images != null && images.size() > 0) {
-            setResult(RESULT_OK, new Intent().putStringArrayListExtra(REQUEST_OUTPUT, images));
+    public void onResult(ArrayList<String> array) {
+        if (array != null && array.size() > 0) {
+            setResult(RESULT_OK, new Intent().putStringArrayListExtra(REQUEST_OUTPUT, array));
             finish();
         }
     }
@@ -314,7 +322,9 @@ public class ImageActivity extends AppCompatActivity {
                 } else {
                     onSelectDone(cameraPath);
                 }
-            } else if (requestCode == PreviewActivity.REQUEST_PREVIEW) { //on preview select change
+            } else if (requestCode == REQUEST_RECORD) {
+                onSelectDone(videoPath);
+            } else if (requestCode == REQUEST_PREVIEW) { //on preview select change
                 boolean isDone = data.getBooleanExtra(PreviewActivity.OUTPUT_ISDONE, false);
                 List<MediaEntity> images = (List<MediaEntity>) data.getSerializableExtra(PreviewActivity.OUTPUT_LIST);
                 if (images != null && images.size() > 0) {

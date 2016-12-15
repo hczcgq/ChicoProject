@@ -52,8 +52,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         holder.folderName.setText(folder.getName());
         holder.imageNum.setText(mContext.getString(R.string.num_postfix,folder.getNumber()));
 
-        holder.isSelected.setVisibility(checkedIndex == position ? View.VISIBLE : View.GONE);
-
         holder.contentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,8 +73,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         ImageView firstImage;
         TextView folderName;
         TextView imageNum;
-        ImageView isSelected;
-
         View contentView;
         public ViewHolder(View itemView) {
             super(itemView);
@@ -84,7 +80,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
             firstImage = (ImageView) itemView.findViewById(R.id.first_image);
             folderName = (TextView) itemView.findViewById(R.id.folder_name);
             imageNum = (TextView) itemView.findViewById(R.id.image_num);
-            isSelected = (ImageView) itemView.findViewById(R.id.is_selected);
         }
     }
 

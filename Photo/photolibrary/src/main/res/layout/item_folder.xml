@@ -38,10 +38,4 @@
             android:textColor="#999999"
             android:textSize="14sp" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/is_selected"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/radio_button" />
 </LinearLayout>
