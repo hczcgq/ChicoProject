@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--按钮点击背景-->
+    <color name="color_button_pressed">#10000000</color>
+    <color name="color_button_normal">#00000000</color>
+
+    <color name="white">#ffffff</color>
+    <color name="image_overlay">#20000000</color>
+    <color name="image_overlay2">#80000000</color>
+    <color name="green">#43c117</color>
+    <color name="divider_color">#dcdcdc</color>
+</resources>
