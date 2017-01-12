@@ -52,13 +52,15 @@ public class MainActivity extends AppCompatActivity {
 //          String cmd="-i /storage/emulated/0/chico/image/camera/Chico_20161215_220504.mp4 -vcodec mpeg4 /storage/emulated/0/chico/image/camera/test.mp4";
 
             //尺寸变换
-            String cmd="-i /storage/emulated/0/chico/image/camera/Chico_20161215_220504.mp4 -s 480x800 /storage/emulated/0/chico/image/camera/video111111.mp4";
+            String cmd="-i /storage/emulated/0/chico/video/Chico_20161221_171129.mp4 -s 480x800 /storage/emulated/0/chico/image/camera/video222222.mp4";
 
             String[] command = cmd.split(" ");
             ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
 
                 @Override
-                public void onStart() {}
+                public void onStart() {
+
+                }
 
                 @Override
                 public void onProgress(String message) {
